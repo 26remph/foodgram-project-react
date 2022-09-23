@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'debug_toolbar',
+    'rest_framework.authtoken',
     'rest_framework',
     'corsheaders',
     'djoser',
@@ -130,4 +131,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 
+}
+
+# AUTH_USER_MODEL = 'reviews.User'
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'ACTIVATION_URL': False,
+    'SET_PASSWORD_RETYPE': False,
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.AllowAny']
+    },
+    'HIDE_USERS': False
 }
