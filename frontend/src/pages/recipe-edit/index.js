@@ -78,7 +78,7 @@ const RecipeEdit = ({ onItemDelete }) => {
       setLoading(false)
     })
     .catch(err => {
-      history.push('/recipes')
+      history.push('/recipe')
     })
   }, [value])
 
@@ -290,7 +290,7 @@ const RecipeEdit = ({ onItemDelete }) => {
               api.deleteRecipe({ recipe_id: id })
                 .then(res => {
                   onItemDelete && onItemDelete()
-                  history.push('/recipes')
+                  history.push('/recipe')
                 })
             }}
           >

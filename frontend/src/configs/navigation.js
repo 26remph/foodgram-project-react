@@ -1,7 +1,7 @@
 export default [
   {
     title: 'Рецепты',
-    href: '/recipes',
+    href: '/recipe',
     auth: false
   },{
     title: 'Мои подписки',
@@ -9,7 +9,7 @@ export default [
     auth: true
   },{
     title: 'Создать рецепт',
-    href: '/recipes/create',
+    href: '/recipe/create',
     auth: true
   },{
     title: 'Избранное',

@@ -123,7 +123,7 @@ function App() {
 
   useEffect(_ => {
     if (loggedIn) {
-      // history.push('/recipes')
+      // history.push('/recipe')
     }
   }, [loggedIn])
 
