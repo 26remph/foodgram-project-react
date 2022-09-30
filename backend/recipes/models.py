@@ -3,9 +3,10 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models import F, Q
 
-User = get_user_model()
 MAX_LENGTH_CHAR_FIELD = 200
 MAX_LENGTH_COLOR_FIELD = 7
+
+User = get_user_model()
 
 
 class Tag(models.Model):

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'djoser',
+    'django_filters',
     'recipes.apps.RecipesConfig',
     'api.apps.ApiConfig',
 ]
@@ -127,10 +128,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
-
 }
 
 # AUTH_USER_MODEL = 'recipe.User'
@@ -141,6 +138,9 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': False,
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny']
+    },
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.UserCreateSerializer',
     },
     'HIDE_USERS': False
 }
