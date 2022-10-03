@@ -137,10 +137,13 @@ DJOSER = {
     'ACTIVATION_URL': False,
     'SET_PASSWORD_RETYPE': False,
     'PERMISSIONS': {
-        'user_list': ['rest_framework.permissions.AllowAny']
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.IsAuthenticated']
     },
     'SERIALIZERS': {
         'user_create': 'api.serializers.UserCreateSerializer',
+        'user': 'api.serializers.UserProfileSerializer',
+        'current_user': 'api.serializers.UserProfileSerializer',
     },
     'HIDE_USERS': False
 }

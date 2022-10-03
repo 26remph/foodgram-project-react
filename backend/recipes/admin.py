@@ -53,7 +53,7 @@ class IngredientAdmin(admin.ModelAdmin):
 @register(Tag)
 class TagAdmin(admin.ModelAdmin):
     """Административная модель для тегов."""
-    list_display = ('name', 'color', 'slug', )
+    list_display = ('id', 'name', 'color', 'slug', )
     search_fields = ('name', 'slug')
     list_filter = ('name', 'slug', 'color')
     empty_value_display = '-empty-'
@@ -66,11 +66,11 @@ class RecipesAdmin(admin.ModelAdmin):
         'name', 'author', 'pub_date', 'cooking_time', 'cnt_favorites'
     )
     search_fields = ('name', )
-    list_filter = ('tag', 'author', 'name')
+    list_filter = ('tags', 'author', 'name')
     empty_value_display = '-empty-'
 
     def cnt_favorites(self, obj):
-        return obj.favorite.count()
+        return obj.favorites.count()
 
 
 class UserAdmin(admin.ModelAdmin):

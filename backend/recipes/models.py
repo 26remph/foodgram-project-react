@@ -54,14 +54,14 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     """Модель для рецептов"""
-    tag = models.ManyToManyField('Tag', related_name='recipe')
+    tags = models.ManyToManyField('Tag', related_name='recipe')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name='author'
     )
-    ingredient = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         'Ingredient',
         related_name='recipe',
         through='IngredientAmount'
