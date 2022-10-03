@@ -5,7 +5,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'api/', include('api.urls')),
+    path('api/', include('api.urls')),
 
 ]
 
@@ -15,8 +15,8 @@ handler403 = 'core.views.permission_denied'
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),)
 
+    urlpatterns += (path('__debug__/', include(debug_toolbar.urls)),)
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )

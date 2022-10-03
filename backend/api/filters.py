@@ -4,6 +4,8 @@ from django.db.models import Value as V
 from django.db.models.functions import StrIndex
 from recipes.models import Ingredient, Recipe
 
+ENUM = (0, 1)
+
 
 class IngredientFilter(filters.FilterSet):
     """Фильтр для ингредиентов.
@@ -27,24 +29,22 @@ class IngredientFilter(filters.FilterSet):
 
 
 class RecipeFilter(filters.FilterSet):
-    """Фильтр для рецептов.
-    Фильтруем по автору и тегам
-    """
+    """Фильтры для рецептов. """
 
     tags = filters.CharFilter(field_name='tags__slug')
     author = filters.NumberFilter(field_name='author__id')
-    # is_favorited = filters.BooleanFilter(method='favorite_filter')
+    is_favorited = filters.NumberFilter(
+        field_name='is_favorited', method='favorite_filter'
+    )
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', )
+        fields = ('tags', 'author', 'is_favorited')
 
-    # @staticmethod
-    # def favorite_filter(queryset, name, value):
-    #
-    #
-    #
-    #     return queryset.filter(
-    #         Q(name__istartswith=value) | Q(name__icontains=value)
-    #     ).order_by(StrIndex(name, V(value)).asc())
+    @staticmethod
+    def favorite_filter(queryset, name, value):
+        return (
+            queryset.filter(is_favorited=value)
+            if value in ENUM else queryset
+        )
 

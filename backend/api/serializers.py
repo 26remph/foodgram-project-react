@@ -4,8 +4,8 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from djoser import serializers as djoser_serializer
 from djoser.conf import settings
-from recipes.models import (Favorite, Follow, Ingredient, IngredientAmount,
-                            Recipe, Tag, User)
+from recipes.models import (Cart, Favorite, Follow, Ingredient,
+                            IngredientAmount, Recipe, Tag, User)
 from rest_framework import serializers, validators
 from rest_framework.generics import get_object_or_404
 
@@ -59,6 +59,20 @@ class UserCreateSerializer(djoser_serializer.UserCreateSerializer):
         return user
 
 
+class CartSerializer(serializers.ModelSerializer):
+    """Сериализация подписок."""
+    id = serializers.IntegerField(source='recipe.id', required=False)
+    name = serializers.CharField(source='recipe.name', required=False)
+    image = serializers.CharField(source='recipe.image', required=False)
+    cooking_time = serializers.IntegerField(
+        source='recipe.cooking_time', required=False
+    )
+
+    class Meta:
+        fields = ('id', 'name', 'image', 'cooking_time', )
+        model = Cart
+
+
 class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализация подписок."""
     id = serializers.IntegerField(source='recipe.id', required=False)
@@ -75,6 +89,13 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализация подписок."""
+    email = serializers.CharField(source='user.email', required=False)
+    id = serializers.CharField(source='user.id', required=False)
+    username = serializers.CharField(source='user.username', required=False)
+    first_name = serializers.CharField(source='user.first_name', required=False)
+    last_name = serializers.CharField(source='user.last_name', required=False)
+    is_subscribed = serializers.BooleanField(required=False)
+    email = serializers.CharField(source='user.email', required=False)
 
     class Meta:
         fields = '__all__'
@@ -129,7 +150,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 class RecipeListRetrieveSerializer(serializers.ModelSerializer):
     """Сериализация для получения рецептов."""
 
-    is_favorited = serializers.SerializerMethodField()
+    is_favorited = serializers.BooleanField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(many=True)
     author = UserProfileSerializer()
@@ -188,7 +209,6 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         with transaction.atomic():
-
             self.create_ingredient(recipe, ingredients)
 
         return recipe
