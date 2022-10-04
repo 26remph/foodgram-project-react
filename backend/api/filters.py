@@ -2,10 +2,12 @@ import django_filters as filters
 from django.db.models import F, Q
 from django.db.models import Value as V
 from django.db.models.functions import StrIndex
-from recipes.models import Ingredient, Recipe
+from recipes.models import Ingredient, Recipe, Tag
 
-ENUM = (0, 1)
-
+ENUM = (
+    (0, 0),
+    (1, 1),
+)
 
 class IngredientFilter(filters.FilterSet):
     """Фильтр для ингредиентов.
@@ -31,22 +33,21 @@ class IngredientFilter(filters.FilterSet):
 class RecipeFilter(filters.FilterSet):
     """Фильтры для рецептов. """
 
-    tags = filters.CharFilter(field_name='tags__slug')
-    author = filters.NumberFilter(field_name='author__id')
-    is_favorited = filters.NumberFilter(
-        field_name='is_favorited', method='boolean_filter'
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        queryset=Tag.objects.all(),
+        to_field_name='slug'
     )
-    is_in_shopping_cart = filters.NumberFilter(
-        field_name='is_in_shopping_cart', method='boolean_filter'
+    author = filters.NumberFilter(field_name='author__id')
+
+    is_favorited = filters.TypedChoiceFilter(
+        field_name='is_favorited', choices=ENUM
+    )
+    is_in_shopping_cart = filters.TypedChoiceFilter(
+        field_name='is_in_shopping_cart', choices=ENUM
     )
 
     class Meta:
         model = Recipe
         fields = ('tags', 'author', )
-
-    def boolean_filter(self, queryset, name, value):
-        return (
-            queryset.filter(**{name: value})
-            if value in ENUM else queryset
-        )
 

@@ -25,13 +25,13 @@ from .serializers import (CartSerializer, FavoriteSerializer, FollowSerializer,
 
 
 class DownloadCartView(APIView):
-    permission_classes = (AllowAny,)
+    """Формирование и отправка списка покупок пользователю."""
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(pk=4)
 
         qs = IngredientAmount.objects.filter(
-            recipe__carts__user=user
+            recipe__carts__user__id=self.request.user.id
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(
