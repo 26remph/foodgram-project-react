@@ -3,8 +3,9 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter, Route, SimpleRouter
 
 from .routers import ExtendedEndpointRouter
-from .views import (CartViewSet, FavoriteViewSet, FollowViewSet,
-                    IngredientViewSet, RecipeViewSet, TagViewSet)
+from .views import (CartViewSet, DownloadCartView, FavoriteViewSet,
+                    FollowViewSet, IngredientViewSet, RecipeViewSet,
+                    TagViewSet)
 
 app_name = 'api'
 
@@ -24,8 +25,10 @@ ext_router.register(
 
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path(r'recipes/download_shopping_cart/', DownloadCartView.as_view(),
+         name='download_cart'),
     path('', include(ext_router.urls)),
+    path('', include(router.urls)),
     path(r'auth/', include('djoser.urls.authtoken')),
     path(r'', include('djoser.urls')),
 ]
