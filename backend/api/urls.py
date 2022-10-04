@@ -13,7 +13,6 @@ router = SimpleRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'tags', TagViewSet, basename='tags')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
-router.register(r'users/subscriptions', FollowViewSet, basename='subscriptions')
 
 ext_router = ExtendedEndpointRouter()
 ext_router.register(
@@ -22,7 +21,9 @@ ext_router.register(
 ext_router.register(
     r"recipes/(?P<id>[^/.]+)/favorite", FavoriteViewSet, basename='favorites'
 )
-
+ext_router.register(
+    r'users/(?P<id>[^/.]+)/subscribe', FollowViewSet, basename='subscriptions'
+)
 
 urlpatterns = [
     path(r'recipes/download_shopping_cart/', DownloadCartView.as_view(),

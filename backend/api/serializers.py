@@ -132,8 +132,6 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-# class IngredientAmountSerializer(serializers.RelatedField):
-# class IngredientAmountSerializer(serializers.Field):
 class IngredientAmountSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(source='ingredient.name')
