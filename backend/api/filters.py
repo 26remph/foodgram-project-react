@@ -1,5 +1,5 @@
 import django_filters as filters
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models import Value as V
 from django.db.models.functions import StrIndex
 from recipes.models import Ingredient, Recipe
@@ -34,17 +34,20 @@ class RecipeFilter(filters.FilterSet):
     tags = filters.CharFilter(field_name='tags__slug')
     author = filters.NumberFilter(field_name='author__id')
     is_favorited = filters.NumberFilter(
-        field_name='is_favorited', method='favorite_filter'
+        field_name='is_favorited', method='boolean_filter'
+    )
+    is_in_shopping_cart = filters.NumberFilter(
+        field_name='is_in_shopping_cart', method='boolean_filter'
     )
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', 'is_favorited')
+        # fields = ('tags', 'author', 'is_in_shopping_cart')
+        fields = ('tags', 'author', )
 
-    @staticmethod
-    def favorite_filter(queryset, name, value):
+    def boolean_filter(self, queryset, name, value):
         return (
-            queryset.filter(is_favorited=value)
+            queryset.filter(**{name: value})
             if value in ENUM else queryset
         )
 

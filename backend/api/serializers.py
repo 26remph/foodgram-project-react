@@ -151,7 +151,7 @@ class RecipeListRetrieveSerializer(serializers.ModelSerializer):
     """Сериализация для получения рецептов."""
 
     is_favorited = serializers.BooleanField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.BooleanField()
     tags = TagSerializer(many=True)
     author = UserProfileSerializer()
     ingredients = IngredientAmountSerializer(
@@ -161,13 +161,6 @@ class RecipeListRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ('pub_date', )
         model = Recipe
-
-    def get_is_favorited(self, obj):
-        return False
-
-    def get_is_in_shopping_cart(self, obj):
-        return False
-
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     """Сериализация для создания и обновления рецептов."""
