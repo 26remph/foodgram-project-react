@@ -3,7 +3,7 @@ from pprint import pprint
 import djqscsv
 import recipes.models
 from django.db.models import (Count, Exists, F, FilteredRelation, OuterRef, Q,
-                              Sum)
+                              Subquery, Sum)
 from django.db.models import Value as V
 from django.db.models.functions import Concat
 from django_filters.rest_framework import DjangoFilterBackend
@@ -29,7 +29,6 @@ class DownloadCartView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-
         qs = IngredientAmount.objects.filter(
             recipe__carts__user__id=self.request.user.id
         ).values(
@@ -91,13 +90,100 @@ class FavoriteViewSet(CreateDeleteMixinSet):
 
 
 class FollowViewSet(CreateListDeleteMixinSet):
-    queryset = Follow.objects.all()
+    # queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     permission_classes = (AllowAny,)
     pagination_class = FoodgramPagination
 
+    def get_queryset(self):
+        # recipes_limit
+        user = User.objects.get(pk=4)
+        # user = self.request.user.follow
+
+        # subquery = Recipe.objects.filter(
+        #     author__following__user=OuterRef('author_id')
+        # ).order_by('author_id')
+        # qs = Recipe.objects.filter(
+        #     author__following__user=user
+        # ).order_by('author_id')
+        # subquery = Recipe.objects.filter(
+        #     author__following__user=user, author_id=OuterRef('author_id')
+        # ).order_by('author_id')
+
+        # qs = (
+        #     user.follower.annotate(
+        #         recipes_count=Count('author__recipe'),
+        #         is_subscribed=V(True)
+        #     )
+        # )
+
+        # qs = (
+        #     user.follower.annotate(
+        #         recipes_count=Count('author__recipe'),
+        #         is_subscribed=V(True)
+        #     ).filter(author__recipe__name=subquery.values('name'))
+        # )
+
+
+        # qs = (
+        #     user.follower.annotate(
+        #         recipes=Subquery(subquery.values('image')[:10]),
+        #         recipes_count=Count('author__recipe'),
+        #         is_subscribed=V(True)
+        #     )
+        # )
+        from itertools import chain
+
+        qs = user.follower.annotate(
+            recipes_count=Count('author__recipe'),
+            is_subscribed=V(True)
+        )
+
+        subquery_1 = Recipe.objects.filter(
+                author__following__user__id=4, author_id=3
+            )
+        print(subquery_1)
+        subquery_2 = Recipe.objects.filter(
+                author__following__user__id=4, author_id=7
+            )
+        print(subquery_2)
+        match = subquery_1 | subquery_2
+        print(subquery_1 | subquery_2)
+        print(type(match), len(match))
+
+        qs_init = Recipe.objects.none()
+        my_list = []
+        for row in qs:
+            print(f'{row.id}, {row}, author_id: {row.author_id}, {row.author}')
+
+            subquery = Recipe.objects.filter(
+                author__following__user=user, author_id=row.author_id
+            ).annotate(recipes_count=Count('author__recipe'))[:3]
+            my_list.append(subquery)
+            print(subquery)
+
+        print(*my_list)
+
+        return qs_init.union(*my_list)
+        # return (
+        #     user.follower.annotate(
+        #         recipes=F('author__recipe'),
+        #         recipes_count=Count('author__recipe'),
+        #         is_subscribed=V(True)
+        #     )
+        # )
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        author = get_object_or_404(User, id=self.kwargs.get('id'))
+        serializer.save(user=self.request.user, author=author)
+
+    def get_object(self):
+        author = get_object_or_404(User, id=self.kwargs.get('id'))
+        instance = get_object_or_404(
+            Follow,
+            Q(user__id=self.request.user.id) & Q(author__id=author.id)
+        )
+        return instance
 
 
 class RecipeViewSet(ModelViewSet):
@@ -128,7 +214,6 @@ class RecipeViewSet(ModelViewSet):
                 is_in_shopping_cart=Exists(is_in_shopping_cart)
             )
         )
-
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipeListRetrieveSerializer

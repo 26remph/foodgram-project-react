@@ -11,7 +11,6 @@ from rest_framework.generics import get_object_or_404
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -69,7 +68,7 @@ class CartSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'name', 'image', 'cooking_time', )
+        fields = ('id', 'name', 'image', 'cooking_time',)
         model = Cart
 
 
@@ -83,23 +82,48 @@ class FavoriteSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'name', 'image', 'cooking_time', )
+        fields = ('id', 'name', 'image', 'cooking_time',)
         model = Favorite
+
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        fields = ('id', 'name', 'image', 'cooking_time')
+        model = Recipe
 
 
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализация подписок."""
-    email = serializers.CharField(source='user.email', required=False)
-    id = serializers.CharField(source='user.id', required=False)
-    username = serializers.CharField(source='user.username', required=False)
-    first_name = serializers.CharField(source='user.first_name', required=False)
-    last_name = serializers.CharField(source='user.last_name', required=False)
+
+    # author = UserProfileSerializer(required=False)
+    email = serializers.EmailField(source='author.email', required=False)
+    id = serializers.IntegerField(source='author.id', required=False)
+    username = serializers.CharField(source='author.username', required=False)
+    first_name = serializers.CharField(
+        source='author.first_name', required=False
+    )
+    last_name = serializers.CharField(source='author.last_name', required=False)
     is_subscribed = serializers.BooleanField(required=False)
-    email = serializers.CharField(source='user.email', required=False)
+
+    # recipes = ShortRecipeSerializer(many=True, required=False)
+    # recipes = serializers.RelatedField(many=True, required=False)
+    # recipes = serializers.SerializerMethodField(required=False)
+    recipes_count = serializers.IntegerField(required=False)
 
     class Meta:
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('author', 'user')
         model = Follow
+
+    # def get_recipes(self, obj):
+    #
+    #     serializers = ShortRecipeSerializer(
+    #         data=obj.author.recipe.all(), many=True
+    #     )
+    #     serializers.is_valid()
+    #     return serializers.data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -133,7 +157,6 @@ class Base64ImageField(serializers.ImageField):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-
     name = serializers.CharField(source='ingredient.name')
     id = serializers.IntegerField(source='ingredient.id')
     measurement_unit = serializers.CharField(
@@ -141,7 +164,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'name', 'measurement_unit', 'amount', )
+        fields = ('id', 'name', 'measurement_unit', 'amount',)
         model = IngredientAmount
 
 
@@ -157,8 +180,9 @@ class RecipeListRetrieveSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        exclude = ('pub_date', )
+        exclude = ('pub_date',)
         model = Recipe
+
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     """Сериализация для создания и обновления рецептов."""
@@ -213,7 +237,6 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
 
         with transaction.atomic():
-
             qs = instance.ingredient_amounts.all()
             qs.delete()
 

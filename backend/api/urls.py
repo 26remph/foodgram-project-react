@@ -26,8 +26,15 @@ ext_router.register(
 )
 
 urlpatterns = [
-    path(r'recipes/download_shopping_cart/', DownloadCartView.as_view(),
-         name='download_cart'),
+    path(r'users/subscriptions/',
+         FollowViewSet.as_view({'get': 'list'}),
+         name='download_cart'
+         ),
+
+    path(r'recipes/download_shopping_cart/',
+         DownloadCartView.as_view(),
+         name='download_cart'
+         ),
     path('', include(ext_router.urls)),
     path('', include(router.urls)),
     path(r'auth/', include('djoser.urls.authtoken')),
