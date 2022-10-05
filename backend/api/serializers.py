@@ -22,17 +22,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
 
     def get_is_subscribed(self, obj):
-
         request = self.context.get('request')
-
-        print('-->', obj)
-
-
         return Follow.objects.filter(
             Q(user__id=request.user.id) & Q(author__id=obj.id)
         ).exists()
-        print(rez)
-
 
 
 class UserCreateSerializer(djoser_serializer.UserCreateSerializer):

@@ -44,7 +44,7 @@ class DownloadCartView(APIView):
 
 
 class CartViewSet(CreateDeleteMixinSet):
-    queryset = Cart.objects.all()
+    queryset = None
     serializer_class = CartSerializer
     permission_classes = (AllowAny,)
 
@@ -64,7 +64,7 @@ class CartViewSet(CreateDeleteMixinSet):
 
 
 class FavoriteViewSet(CreateDeleteMixinSet):
-    queryset = Favorite.objects.all()
+    queryset = None
     serializer_class = FavoriteSerializer
     permission_classes = (AllowAny,)
 
@@ -100,6 +100,11 @@ class FollowViewSet(CreateListDeleteMixinSet):
 
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.kwargs.get('id'))
+        if self.request.user == author:
+            raise ValueError('Subscribe to himself not allowed.')
+        if self.request.user.follower.filter(author=author).exists():
+            raise ValueError('Subscribe also present.')
+
         serializer.save(user=self.request.user, author=author)
 
     def get_object(self):
