@@ -2,6 +2,7 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.db.models import Q
 from djoser import serializers as djoser_serializer
 from djoser.conf import settings
 from recipes.models import (Cart, Favorite, Follow, Ingredient,
@@ -21,7 +22,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
 
     def get_is_subscribed(self, obj):
-        return False
+
+        request = self.context.get('request')
+
+        print('-->', obj)
+
+
+        return Follow.objects.filter(
+            Q(user__id=request.user.id) & Q(author__id=obj.id)
+        ).exists()
+        print(rez)
+
 
 
 class UserCreateSerializer(djoser_serializer.UserCreateSerializer):
