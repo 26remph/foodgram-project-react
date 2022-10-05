@@ -1,18 +1,12 @@
-from pprint import pprint
-
 import djqscsv
-import recipes.models
-from django.db.models import (Count, Exists, F, FilteredRelation, OuterRef, Q,
-                              Subquery, Sum)
+from django.db.models import Count, Exists, OuterRef, Q, Sum
 from django.db.models import Value as V
 from django.db.models.functions import Concat
 from django_filters.rest_framework import DjangoFilterBackend
 from recipes.models import (Cart, Favorite, Follow, Ingredient,
                             IngredientAmount, Recipe, Tag, User)
-from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
@@ -90,7 +84,6 @@ class FavoriteViewSet(CreateDeleteMixinSet):
 
 
 class FollowViewSet(CreateListDeleteMixinSet):
-    # queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     permission_classes = (AllowAny,)
     pagination_class = FoodgramPagination
@@ -119,19 +112,11 @@ class FollowViewSet(CreateListDeleteMixinSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    # queryset = Recipe.objects.all()
     serializer_class = RecipeCreateUpdateSerializer
     permission_classes = (AllowAny,)
-    # filter_backends = (filters.SearchFilter,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    # filterset_fields = ('tags__slug', 'author__id', )
-    # search_fields = ('name',)
-    # search_fields = ('$following__username', )
-    # lookup_field = 'slug'
     pagination_class = FoodgramPagination
-
-    # ordering = ('following__username', )
 
     def get_queryset(self):
         is_in_shopping_cart = Cart.objects.filter(

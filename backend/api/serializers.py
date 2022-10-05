@@ -108,7 +108,6 @@ class FollowSerializer(serializers.ModelSerializer):
     recipes_count = serializers.IntegerField(required=False)
 
     class Meta:
-        # fields = '__all__'
         exclude = ('user', 'author')
         model = Follow
 
