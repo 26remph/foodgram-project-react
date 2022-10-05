@@ -89,7 +89,7 @@ class FollowViewSet(CreateListDeleteMixinSet):
     pagination_class = FoodgramPagination
 
     def get_queryset(self):
-        user = self.request.user.follow
+        user = self.request.user
 
         return (
             user.follower.annotate(

@@ -118,7 +118,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
         recipes_limit = params.get('recipes_limit')
         if recipes_limit:
-            data = obj.author.recipe.all()[:recipes_limit]
+            data = obj.author.recipe.all()[:int(recipes_limit)]
         else:
             data = obj.author.recipe.all()
 
