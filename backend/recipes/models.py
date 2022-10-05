@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from django.db.models import F, Q
 
 MAX_LENGTH_CHAR_FIELD = 200
 MAX_LENGTH_COLOR_FIELD = 7
@@ -121,33 +120,33 @@ class IngredientAmount(models.Model):
         return f'{self.recipe} {self.ingredient}'
 
 
-class Follow(models.Model):
-    """Модель для подписок на авторов."""
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower'
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following'
-    )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['user', 'author'], name='user_author'),
-        ]
-        constraints = [
-            models.CheckConstraint(
-                check=~Q(user=F('author')),
-                name='user_not_author'),
-            models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_follow'
-            )
-        ]
+# class Follow(models.Model):
+#     """Модель для подписок на авторов."""
+#
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='follower'
+#     )
+#     author = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name='following'
+#     )
+#
+#     class Meta:
+#         indexes = [
+#             models.Index(fields=['user', 'author'], name='user_author'),
+#         ]
+#         constraints = [
+#             models.CheckConstraint(
+#                 check=~Q(user=F('author')),
+#                 name='user_not_author'),
+#             models.UniqueConstraint(
+#                 fields=['user', 'author'],
+#                 name='unique_follow'
+#             )
+#         ]
 
 
 class Favorite(models.Model):

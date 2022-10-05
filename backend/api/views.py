@@ -3,12 +3,13 @@ from django.db.models import Count, Exists, OuterRef, Q, Sum
 from django.db.models import Value as V
 from django.db.models.functions import Concat
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import (Cart, Favorite, Follow, Ingredient,
-                            IngredientAmount, Recipe, Tag, User)
+from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
+                            Recipe, Tag, User)
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import CreateDeleteMixinSet, CreateListDeleteMixinSet

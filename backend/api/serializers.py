@@ -5,10 +5,11 @@ from django.db import transaction
 from django.db.models import Q
 from djoser import serializers as djoser_serializer
 from djoser.conf import settings
-from recipes.models import (Cart, Favorite, Follow, Ingredient,
-                            IngredientAmount, Recipe, Tag, User)
-from rest_framework import serializers, validators
+from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
+                            Recipe, Tag, User)
+from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
+from users.models import Follow
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
