@@ -96,9 +96,7 @@ class FollowViewSet(CreateListDeleteMixinSet):
     pagination_class = FoodgramPagination
 
     def get_queryset(self):
-        # recipes_limit
-        user = User.objects.get(pk=4)
-        # user = self.request.user.follow
+        user = self.request.user.follow
 
         # subquery = Recipe.objects.filter(
         #     author__following__user=OuterRef('author_id')
@@ -134,44 +132,44 @@ class FollowViewSet(CreateListDeleteMixinSet):
         # )
         from itertools import chain
 
-        qs = user.follower.annotate(
-            recipes_count=Count('author__recipe'),
-            is_subscribed=V(True)
-        )
-
-        subquery_1 = Recipe.objects.filter(
-                author__following__user__id=4, author_id=3
-            )
-        print(subquery_1)
-        subquery_2 = Recipe.objects.filter(
-                author__following__user__id=4, author_id=7
-            )
-        print(subquery_2)
-        match = subquery_1 | subquery_2
-        print(subquery_1 | subquery_2)
-        print(type(match), len(match))
-
-        qs_init = Recipe.objects.none()
-        my_list = []
-        for row in qs:
-            print(f'{row.id}, {row}, author_id: {row.author_id}, {row.author}')
-
-            subquery = Recipe.objects.filter(
-                author__following__user=user, author_id=row.author_id
-            ).annotate(recipes_count=Count('author__recipe'))[:3]
-            my_list.append(subquery)
-            print(subquery)
-
-        print(*my_list)
-
-        return qs_init.union(*my_list)
-        # return (
-        #     user.follower.annotate(
-        #         recipes=F('author__recipe'),
-        #         recipes_count=Count('author__recipe'),
-        #         is_subscribed=V(True)
-        #     )
+        # ---------------------------------------------------------------
+        # qs = user.follower.annotate(
+        #     recipes_count=Count('author__recipe'),
+        #     is_subscribed=V(True)
         # )
+        #
+        # subquery_1 = Recipe.objects.filter(
+        #         author__following__user__id=4, author_id=3
+        #     )
+        # print(subquery_1)
+        # subquery_2 = Recipe.objects.filter(
+        #         author__following__user__id=4, author_id=7
+        #     )
+        # print(subquery_2)
+        # match = subquery_1 | subquery_2
+        # print(subquery_1 | subquery_2)
+        # print(type(match), len(match))
+        #
+        # qs_init = Recipe.objects.none()
+        # my_list = []
+        # for row in qs:
+        #     print(f'{row.id}, {row}, author_id: {row.author_id}, {row.author}')
+        #
+        #     subquery = Recipe.objects.filter(
+        #         author__following__user=user, author_id=row.author_id
+        #     ).annotate(recipes_count=Count('author__recipe'))[:3]
+        #     my_list.append(subquery)
+        #     print(subquery)
+        #
+        # print(*my_list)
+        # return qs_init.union(*my_list)
+        # ---------------------------------------------------------------
+        return (
+            user.follower.annotate(
+                recipes_count=Count('author__recipe'),
+                is_subscribed=V(True)
+            )
+        )
 
     def perform_create(self, serializer):
         author = get_object_or_404(User, id=self.kwargs.get('id'))

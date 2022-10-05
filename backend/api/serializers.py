@@ -87,8 +87,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         fields = ('id', 'name', 'image', 'cooking_time')
         model = Recipe
@@ -97,7 +95,6 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 class FollowSerializer(serializers.ModelSerializer):
     """Сериализация подписок."""
 
-    # author = UserProfileSerializer(required=False)
     email = serializers.EmailField(source='author.email', required=False)
     id = serializers.IntegerField(source='author.id', required=False)
     username = serializers.CharField(source='author.username', required=False)
@@ -107,23 +104,30 @@ class FollowSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='author.last_name', required=False)
     is_subscribed = serializers.BooleanField(required=False)
 
-    # recipes = ShortRecipeSerializer(many=True, required=False)
-    # recipes = serializers.RelatedField(many=True, required=False)
-    # recipes = serializers.SerializerMethodField(required=False)
+    recipes = serializers.SerializerMethodField(required=False, read_only=True)
     recipes_count = serializers.IntegerField(required=False)
 
     class Meta:
         # fields = '__all__'
-        exclude = ('author', 'user')
+        exclude = ('user', 'author')
         model = Follow
 
-    # def get_recipes(self, obj):
-    #
-    #     serializers = ShortRecipeSerializer(
-    #         data=obj.author.recipe.all(), many=True
-    #     )
-    #     serializers.is_valid()
-    #     return serializers.data
+    def get_recipes(self, obj):
+
+        request = self.context.get('request')
+        params = request.query_params
+
+        recipes_limit = params.get('recipes_limit')
+        if recipes_limit:
+            data = obj.author.recipe.all()[:recipes_limit]
+        else:
+            data = obj.author.recipe.all()
+
+        recipe_serializers = ShortRecipeSerializer(
+            data=data, many=True
+        )
+        recipe_serializers.is_valid()
+        return recipe_serializers.data
 
 
 class TagSerializer(serializers.ModelSerializer):
