@@ -10,9 +10,9 @@ from .views import (CartViewSet, DownloadCartView, FavoriteViewSet,
 app_name = 'api'
 
 router = SimpleRouter()
-router.register(r'recipes', RecipeViewSet, basename='recipes')
-router.register(r'tags', TagViewSet, basename='tags')
-router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router.register('recipes', RecipeViewSet, basename='recipes')
+router.register('tags', TagViewSet, basename='tags')
+router.register('ingredients', IngredientViewSet, basename='ingredients')
 
 ext_router = ExtendedEndpointRouter()
 ext_router.register(
@@ -26,17 +26,17 @@ ext_router.register(
 )
 
 urlpatterns = [
-    path(r'users/subscriptions/',
+    path('users/subscriptions/',
          FollowViewSet.as_view({'get': 'list'}),
          name='download_cart'
          ),
 
-    path(r'recipes/download_shopping_cart/',
+    path('recipes/download_shopping_cart/',
          DownloadCartView.as_view(),
          name='download_cart'
          ),
     path('', include(ext_router.urls)),
     path('', include(router.urls)),
-    path(r'auth/', include('djoser.urls.authtoken')),
-    path(r'', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
 ]

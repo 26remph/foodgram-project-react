@@ -4,7 +4,7 @@ from django.db.models import Value as V
 from django.db.models.functions import StrIndex
 from recipes.models import Ingredient, Recipe, Tag
 
-ENUM = (
+TURN = (
     (0, 0),
     (1, 1),
 )
@@ -41,10 +41,10 @@ class RecipeFilter(filters.FilterSet):
     author = filters.NumberFilter(field_name='author__id')
 
     is_favorited = filters.TypedChoiceFilter(
-        field_name='is_favorited', choices=ENUM
+        field_name='is_favorited', choices=TURN
     )
     is_in_shopping_cart = filters.TypedChoiceFilter(
-        field_name='is_in_shopping_cart', choices=ENUM
+        field_name='is_in_shopping_cart', choices=TURN
     )
 
     class Meta:

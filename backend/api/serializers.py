@@ -204,7 +204,6 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
-        # fields = '__all__'
         model = Recipe
         fields = (
             'ingredients', 'tags', 'image', 'name',
