@@ -5,7 +5,6 @@ services:
     restart: always
     volumes:
       - db_value:/var/lib/postgresql/data/
-#      - db_value:/var/lib/postgresql/data/
     env_file:
       - .env
 
@@ -27,6 +26,7 @@ services:
 #      - static_value:/app/static/
       - media_value:/app/media/
       - docs:/app/docs
+      - ./backups:/app/backups/
 
     depends_on:
       - db

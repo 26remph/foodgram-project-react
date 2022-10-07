@@ -6,7 +6,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from recipes.models import (Cart, Favorite, Ingredient, IngredientAmount,
                             Recipe, Tag, User)
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from users.models import Follow
@@ -47,7 +48,7 @@ class DownloadCartView(APIView):
 class CartViewSet(CreateDeleteMixinSet):
     queryset = None
     serializer_class = CartSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(
@@ -67,7 +68,7 @@ class CartViewSet(CreateDeleteMixinSet):
 class FavoriteViewSet(CreateDeleteMixinSet):
     queryset = None
     serializer_class = FavoriteSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(
@@ -86,7 +87,7 @@ class FavoriteViewSet(CreateDeleteMixinSet):
 
 class FollowViewSet(CreateListDeleteMixinSet):
     serializer_class = FollowSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = FoodgramPagination
 
     def get_queryset(self):
@@ -119,7 +120,7 @@ class FollowViewSet(CreateListDeleteMixinSet):
 
 class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeCreateUpdateSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly, )
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = FoodgramPagination
@@ -135,8 +136,9 @@ class RecipeViewSet(ModelViewSet):
             Recipe.objects.annotate(
                 is_favorited=Exists(is_favorited),
                 is_in_shopping_cart=Exists(is_in_shopping_cart)
-            )
+            ).order_by('-pub_date')
         )
+
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return RecipeListRetrieveSerializer

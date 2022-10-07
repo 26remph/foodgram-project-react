@@ -6,16 +6,17 @@ from dotenv import load_dotenv
 # BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+load_dotenv()
 
-DEBUG = bool(os.getenv('DJANGO_DEBUG', True))
-
-if DEBUG:
-    load_dotenv()
+DEBUG = bool(os.getenv('DJANGO_DEBUG', None))
 
 SECRET_KEY = os.getenv(
     'DJANGO_SECRET_KEY',
     'django-insecure-2uofan0*zru5rt&^izn993wzc)r9!g77*9t=_)n^+edunx22so'
 )
+
+print(DEBUG)
+print(SECRET_KEY)
 
 ALLOWED_HOSTS = ["*", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = True

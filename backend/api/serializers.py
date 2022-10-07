@@ -11,6 +11,8 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from users.models import Follow
 
+from backend.settings import MEDIA_URL
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
@@ -155,6 +157,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class Base64ImageField(serializers.ImageField):
+
+    def to_representation(self, value):
+        return f'{MEDIA_URL}{value}'
+
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
             format, imgstr = data.split(';base64,')
@@ -186,6 +192,8 @@ class RecipeListRetrieveSerializer(serializers.ModelSerializer):
     ingredients = IngredientAmountSerializer(
         many=True, source='ingredient_amounts'
     )
+    image = Base64ImageField(required=False, use_url=False)
+
 
     class Meta:
         exclude = ('pub_date',)
@@ -194,7 +202,8 @@ class RecipeListRetrieveSerializer(serializers.ModelSerializer):
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     """Сериализация для создания и обновления рецептов."""
-
+    id = serializers.IntegerField(required=False)
+    author = UserProfileSerializer(required=False)
     tags = serializers.SlugRelatedField(
         many=True,
         queryset=Tag.objects.all(),
@@ -202,12 +211,16 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     )
     ingredients = IngredientSerializer(many=True)
     image = Base64ImageField(required=False, allow_null=True)
+    is_favorited = serializers.BooleanField(default=False, read_only=True)
+    is_in_shopping_cart = serializers.BooleanField(
+        default=False, read_only=True
+    )
 
     class Meta:
         model = Recipe
         fields = (
-            'ingredients', 'tags', 'image', 'name',
-            'text', 'cooking_time',
+            'id', 'author', 'ingredients', 'tags', 'image', 'name',
+            'text', 'cooking_time', 'is_favorited', 'is_in_shopping_cart',
         )
 
     @staticmethod
