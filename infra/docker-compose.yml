@@ -5,6 +5,7 @@ services:
     restart: always
     volumes:
       - db_value:/var/lib/postgresql/data/
+#      - db_value:/var/lib/postgresql/data/
     env_file:
       - .env
 
@@ -12,17 +13,21 @@ services:
 #    build:
 #      context: ../frontend
 #      dockerfile: Dockerfile
-    image: 26remph/food_back:latest
+    image: 26remph/food_front:latest
     restart: always
     volumes:
-      - front_value:/app/result_build/build
+      - front_value:/app/result_build/build/
 
   backend:
     image: 26remph/food_back:latest
     restart: always
     volumes:
-      - static_value:/app/static/
+      - static_rest:/app/static/rest_framework/
+      - static_admin:/app/static/admin/
+#      - static_value:/app/static/
       - media_value:/app/media/
+      - docs:/app/docs
+
     depends_on:
       - db
       - frontend
@@ -36,21 +41,27 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - front_value:/usr/share/nginx/html/
 #      - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
-      - static_value:/usr/share/nginx/html/static/
-#      - static_value:../backend/static/rest_framework:/usr/share/nginx/html/static/rest_framework/
-#      - static_value:../backend/static/debug_toolbar:/usr/share/nginx/html/static/debug_toolbar/
-#      - static_value:../backend/static/admin:/usr/share/nginx/html/static/admin/
+      - docs:/usr/share/nginx/html/api/docs/
+
+#      - static_value:/usr/share/nginx/html/static/
+      - front_value:/usr/share/nginx/html/
+      - static_rest:/usr/share/nginx/html/static/rest_framework/
+      - static_admin:/usr/share/nginx/html/static/admin/
+
+#      - static_value/rest_framework/:../backend/static/rest_framework:/usr/share/nginx/html/static/rest_framework/
+#      - static_value/debug_toolbar/:../backend/static/debug_toolbar:/usr/share/nginx/html/static/debug_toolbar/
+#      - static_value/admin/:../backend/static/admin:/usr/share/nginx/html/static/admin/
       - media_value:/usr/share/nginx/html/media/
     depends_on:
       - backend
       - frontend
 
 volumes:
-  static_value:
+  static_rest:
+  static_admin:
   media_value:
   db_value:
   front_value:
+  docs:
 

@@ -6,7 +6,7 @@ LABEL author='remph' email='v.bars@vidim.ru'\
       vendor='X26' git='26Remph'
 
 RUN mkdir /app
-COPY ../ /app
+COPY ["../", "/app"]
 RUN python -m pip install --upgrade pip
 RUN pip3 install -r /app/requirements.txt --no-cache-dir
 RUN python3 ./app/manage.py makemigrations
