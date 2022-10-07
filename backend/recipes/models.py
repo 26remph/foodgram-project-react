@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
-from settings import MAX_LENGTH_CHAR_FIELD, MAX_LENGTH_COLOR_FIELD
+
+from .settings import MAX_LENGTH_CHAR_FIELD, MAX_LENGTH_COLOR_FIELD
 
 User = get_user_model()
 
