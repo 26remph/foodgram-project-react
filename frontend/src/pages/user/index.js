@@ -54,7 +54,7 @@ const UserPage = ({ updateOrders }) => {
         setSubscribed(res.is_subscribed)
       })
       .catch(err => {
-        history.push('/recipe')
+        history.push('/recipes')
       })
   }
 

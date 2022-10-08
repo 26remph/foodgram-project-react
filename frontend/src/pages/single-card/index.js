@@ -34,7 +34,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
         setLoading(false)
       })
       .catch(err => {
-        history.push('/recipe')
+        history.push('/recipes')
       })
   }, [])
   

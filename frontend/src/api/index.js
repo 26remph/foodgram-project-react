@@ -101,7 +101,7 @@ class Api {
   }
 
 
-  // recipe
+  // recipes
 
   getRecipes ({
     page = 1,
