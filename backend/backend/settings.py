@@ -15,12 +15,9 @@ SECRET_KEY = os.getenv(
     'django-insecure-2uofan0*zru5rt&^izn993wzc)r9!g77*9t=_)n^+edunx22so'
 )
 
-print(DEBUG)
-print(SECRET_KEY)
-
 ALLOWED_HOSTS = ["*", "localhost"]
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_URLS_REGEX = r'^/api/.*$'
+# CORS_URLS_REGEX = r'^/api/.*$'
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
